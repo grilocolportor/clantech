@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "194907002616",
+    "project_id": "clan-track-cbb88",
+    "storage_bucket": "clan-track-cbb88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194907002616:android:7ff4edf6faf05e26c9cd0d",
+        "android_client_info": {
+          "package_name": "com.example.clan_track"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT-VnRHlrSA4s22yrCE_np5NiBL9WYBSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
