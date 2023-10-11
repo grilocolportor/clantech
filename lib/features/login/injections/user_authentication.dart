@@ -7,7 +7,7 @@ abstract class IUserAuthentication {
    Future<Either<LoginError, User?>> signInWithEmailAndPassword(
       {required String email, required String password});
   Future<void> signOut();
-  Future<Either<LoginError, User?>> createUserWithEmailAndPassword({
+  Future<Either<Exception, User?>> createUserWithEmailAndPassword({
    required  String email,
     required String password,
   });

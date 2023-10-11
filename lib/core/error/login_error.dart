@@ -1,4 +1,4 @@
-class LoginError extends Error {
+class LoginError implements Exception {
   final String message;
 
   LoginError(this.message);

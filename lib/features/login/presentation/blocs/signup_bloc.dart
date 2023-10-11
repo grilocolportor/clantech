@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../core/error/login_error.dart';
 import '../../injections/setup_login.dart';
 import '../../injections/user_authentication.dart';
 
@@ -27,43 +28,41 @@ class AuthCubit extends Cubit<AuthState> {
 
   final injection = locatorlogin.get<IUserAuthentication>();
 
-  // Register a new user with email and password
-  Future<void> registerWithEmailAndPassword(
-      String email, String password) async {
+  // Sign out the user
+  Future<void> signOut() async {
+    await injection.signOut();
+    emit(AuthInitial());
+  }
+
+  Future<void> createUserWithEmailAndPassword(
+      {required String email, required String password}) async {
     emit(AuthLoading());
     try {
       var result = await injection.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      result.fold((left) => emit(AuthError(
-       left.toString()
-      )), (right) => emit(AuthAuthenticated(right!)));
-
-      
+      result.fold((left) {
+        
+             
+      },
+          (right) => emit(AuthAuthenticated(right!)));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
+    
   }
 
   // Sign in with email and password
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     emit(AuthLoading());
     try {
-    var result = await injection.signInWithEmailAndPassword(
+      var result = await injection.signInWithEmailAndPassword(
           email: email, password: password);
 
-      result.fold((left) => emit(AuthError(
-       left.toString()
-      )), (right) => emit(AuthAuthenticated(right!)));
-
+      result.fold((left) => emit(AuthError(left.toString())),
+          (right) => emit(AuthAuthenticated(right!)));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
-  }
-
-  // Sign out the user
-  Future<void> signOut() async {
-    await injection.signOut();
-    emit(AuthInitial());
   }
 }

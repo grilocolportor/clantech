@@ -1,7 +1,9 @@
 import 'package:clan_track/features/login/presentation/widgets/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../blocs/signup_bloc.dart';
 import '../../widgets/my_button.dart';
 import '../../widgets/square_tile.dart';
 
@@ -9,11 +11,14 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   // text editing controllers
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   // sign user in method
-  void signUserIn() {}
+  signUserIn(BuildContext context) {
+    context.read<AuthCubit>().createUserWithEmailAndPassword(
+        email: emailController.text, password: passwordController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +51,7 @@ class LoginPage extends StatelessWidget {
 
           // username textfield
           MyTextField(
-            controller: usernameController,
+            controller: emailController,
             hintText: 'Username',
             obscureText: false,
           ),
@@ -80,7 +85,10 @@ class LoginPage extends StatelessWidget {
 
           // sign in button
           MyButton(
-            onTap: signUserIn,
+            onTap: () {
+                context.read<AuthCubit>().createUserWithEmailAndPassword(
+        email: emailController.text, password: passwordController.text);;
+            },
           ),
 
           SizedBox(height: size.height * 0.03),
@@ -112,20 +120,26 @@ class LoginPage extends StatelessWidget {
               ],
             ),
           ),
- 
+
           SizedBox(height: size.height * 0.02),
 
           // google + apple sign in buttons
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // google button
-              SquareTile(imagePath: 'assets/images/google.png'),
+              InkWell(
+                  onTap: () {
+                    // context.read<AuthCubit>().signOut();
+                  },
+                  child:
+                      const SquareTile(imagePath: 'assets/images/google.png')),
 
-              SizedBox(width: 25),
+              const SizedBox(width: 25),
 
               // apple button
-              SquareTile(imagePath: 'assets/images/apple.png')
+              InkWell(
+                  child: const SquareTile(imagePath: 'assets/images/apple.png'))
             ],
           ),
 
