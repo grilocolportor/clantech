@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/config/app_strings.dart';
 import 'core/config/themes/theme_data.dart';
 import 'features/login/presentation/blocs/signup_bloc.dart';
+import 'features/tracker/presentation/pages/TrackPage.dart';
 
 class ClanTracker extends StatefulWidget {
   const ClanTracker({super.key});
@@ -27,7 +28,7 @@ class _ClanTrackerState extends State<ClanTracker> {
           : lightTheme,
       home: BlocProvider(
         create: (context) => authCubit,
-        child: const AuthView(),
+        child: const TrackPage(),
       ),
     );
   }
