@@ -15,5 +15,5 @@ void setupLocator() {
   setupLogin();
 
   locator.registerFactory<IFirebaseAuth>(() => FirebaseAuthImpl());
-   locator.registerFactory<ILocalAuthInterface>(() => LocalAuth());
+   locator.registerFactory<ILocalAuthInterface>(() => LocalAuthImpl());
 }

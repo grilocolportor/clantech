@@ -138,8 +138,8 @@ class LoginPage extends StatelessWidget {
               const SizedBox(width: 25),
 
               // apple button
-              InkWell(
-                  child: const SquareTile(imagePath: 'assets/images/apple.png'))
+              const InkWell(
+                  child: SquareTile(imagePath: 'assets/images/apple.png'))
             ],
           ),
 

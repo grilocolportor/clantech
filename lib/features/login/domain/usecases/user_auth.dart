@@ -1,7 +1,9 @@
 import 'package:clan_track/core/components/form_validator.dart';
 import 'package:clan_track/core/dependency_injection/local_auth_interface.dart';
+import 'package:clan_track/core/entities/login/local_user.dart';
 import 'package:clan_track/core/error/login_error.dart';
 import 'package:clan_track/core/error/validator_form_error.dart';
+import 'package:clan_track/core/usercases/login/local_auth.dart';
 
 import 'package:either_dart/src/either.dart';
 
@@ -58,4 +60,5 @@ class UserAuthImpl implements IUserAuthentication {
     String userSerializabled = injectionLocalAuth.serializableduser(user);
     await injectionLocalAuth.saveUser(user: userSerializabled);
   }
+
 }

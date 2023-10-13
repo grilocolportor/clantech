@@ -20,8 +20,8 @@ class LocalUser {
     return {
       'email': email,
       'token': token,
-      'displayName' : displayName,
-      'urlPhoto' : urlPhoto,
+      'displayName' : displayName ?? 'null',
+      'urlPhoto' : urlPhoto ?? 'null',
     };
   }
 }

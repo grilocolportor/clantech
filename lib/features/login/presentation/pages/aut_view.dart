@@ -1,3 +1,4 @@
+import 'package:clan_track/core/entities/login/local_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,13 +12,15 @@ class AuthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<AuthCubit>().getLocalUser();
     return Scaffold(
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is AuthInitial) {
             return buildInitialUI(); // Replace with your initial UI
           } else if (state is AuthLoading) {
-            return buildLoadingUI(); // Replace with your loading UI
+            return buildLoadingUI(); 
+          // Replace with your loading UI
           } else if (state is AuthError) {
             return buildErrorUI(state.error); // Replace with your error UI
           } else if (state is AuthAuthenticated) {
@@ -47,7 +50,7 @@ class AuthView extends StatelessWidget {
     );
   }
 
-  Widget buildAuthenticatedUI(BuildContext context, User user) {
+  Widget buildAuthenticatedUI(BuildContext context, LocalUser user) {
     return const TrackPage();
   }
 }

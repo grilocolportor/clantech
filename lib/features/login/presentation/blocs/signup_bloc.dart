@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:clan_track/core/dependency_injection/local_auth_interface.dart';
+import 'package:clan_track/core/dependency_injection/setup.dart';
+import 'package:clan_track/core/usercases/login/local_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../core/entities/login/local_user.dart';
 import '../../../../core/error/login_error.dart';
 import '../../injections/setup_login.dart';
 import '../../injections/user_authentication.dart';
@@ -11,6 +17,8 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
+class AuthAutenticating extends AuthState {}
+
 class AuthError extends AuthState {
   final String error;
 
@@ -18,7 +26,7 @@ class AuthError extends AuthState {
 }
 
 class AuthAuthenticated extends AuthState {
-  final User user;
+  final LocalUser user;
 
   AuthAuthenticated(this.user);
 }
@@ -27,6 +35,7 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
   final injection = locatorlogin.get<IUserAuthentication>();
+  final injectionLocalAuth = locator.get<ILocalAuthInterface>();
 
   // Sign out the user
   Future<void> signOut() async {
@@ -41,7 +50,7 @@ class AuthCubit extends Cubit<AuthState> {
       var result = await injection.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      result.fold((left) {}, (right) => emit(AuthAuthenticated(right!)));
+      result.fold((left) {}, (right) => getLocalUser());
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -56,9 +65,20 @@ class AuthCubit extends Cubit<AuthState> {
           email: email, password: password);
 
       result.fold((left) => emit(AuthError(left.toString())),
-          (right) => emit(AuthAuthenticated(right!)));
+          (right) => getLocalUser());
     } catch (e) {
       emit(AuthError(e.toString()));
     }
+  }
+
+  Future<void> getLocalUser() async {
+    emit(AuthLoading());
+    String user = await injectionLocalAuth.getUser() ?? '';
+    
+    if (user.isEmpty) {
+      emit(AuthInitial());
+      return;
+    }
+    emit(AuthAuthenticated(injectionLocalAuth.deserializableduser(user)));
   }
 }
