@@ -17,8 +17,7 @@ class _MapsPageState extends State<MapsPage> {
   bool _added = false;
   @override
   Widget build(BuildContext context) {
-    return 
-    StreamBuilder(
+    return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('locations').snapshots(),
       builder: (context, snapshot) {
         if(_added){

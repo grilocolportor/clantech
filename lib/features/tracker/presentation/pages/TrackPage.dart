@@ -18,7 +18,14 @@ class _TrackPageState extends State<TrackPage> {
   StreamSubscription<loc.LocationData>? _locationSubscription;
 
   @override
+  initState() {
+    super.initState();
+    _requestPermission();
+  }
+
+  @override
   Widget build(BuildContext context) {
+     _listeningLocation();
     return Scaffold(
         body: SafeArea(
       child: Column(
@@ -38,48 +45,52 @@ class _TrackPageState extends State<TrackPage> {
                 _stopLocation();
               },
               child: Text('Stop Location')),
-          Expanded(
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('locations')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return ListView.builder(
-                    itemCount: snapshot.data?.docs.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(snapshot.data?.docs[index]['name']),
-                        subtitle: Row(
-                          children: [
-                            Text(snapshot.data!.docs[index]['latitude']
-                                .toString()),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(snapshot.data!.docs[index]['longitude']
-                                .toString())
-                          ],
-                        ),
-                        trailing: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MapsPage(
+          const Expanded(
+            child: MapsPage(
                                             userId:
-                                                snapshot.data!.docs[index].id,
-                                          )));
-                            },
-                            icon: const Icon(Icons.directions)),
-                      );
-                    });
-              },
-            ),
+                                                'user 1',
+                                          )
+            // StreamBuilder(
+            //   stream: FirebaseFirestore.instance
+            //       .collection('locations')
+            //       .snapshots(),
+            //   builder: (context, snapshot) {
+            //     if (!snapshot.hasData) {
+            //       return const Center(
+            //         child: CircularProgressIndicator(),
+            //       );
+            //     }
+            //     return ListView.builder(
+            //         itemCount: snapshot.data?.docs.length,
+            //         itemBuilder: (context, index) {
+            //           return ListTile(
+            //             title: Text(snapshot.data?.docs[index]['name']),
+            //             subtitle: Row(
+            //               children: [
+            //                 Text(snapshot.data!.docs[index]['latitude']
+            //                     .toString()),
+            //                 const SizedBox(
+            //                   width: 10,
+            //                 ),
+            //                 Text(snapshot.data!.docs[index]['longitude']
+            //                     .toString())
+            //               ],
+            //             ),
+            //             trailing: IconButton(
+            //                 onPressed: () {
+            //                   Navigator.push(
+            //                       context,
+            //                       MaterialPageRoute(
+            //                           builder: (context) => MapsPage(
+            //                                 userId:
+            //                                     snapshot.data!.docs[index].id,
+            //                               )));
+            //                 },
+            //                 icon: const Icon(Icons.directions)),
+            //           );
+            //         });
+            //   },
+            // ),
           )
         ],
       ),
