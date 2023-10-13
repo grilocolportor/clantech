@@ -25,73 +25,30 @@ class _TrackPageState extends State<TrackPage> {
 
   @override
   Widget build(BuildContext context) {
-     _listeningLocation();
-    return Scaffold(
+    _listeningLocation();
+    return const Scaffold(
         body: SafeArea(
       child: Column(
         children: [
-          TextButton(
-              onPressed: () {
-                _getLocation();
-              },
-              child: Text('Get Location')),
-          TextButton(
-              onPressed: () {
-                _listeningLocation();
-              },
-              child: Text('Listem Location')),
-          TextButton(
-              onPressed: () {
-                _stopLocation();
-              },
-              child: Text('Stop Location')),
-          const Expanded(
-            child: MapsPage(
-                                            userId:
-                                                'user 1',
-                                          )
-            // StreamBuilder(
-            //   stream: FirebaseFirestore.instance
-            //       .collection('locations')
-            //       .snapshots(),
-            //   builder: (context, snapshot) {
-            //     if (!snapshot.hasData) {
-            //       return const Center(
-            //         child: CircularProgressIndicator(),
-            //       );
-            //     }
-            //     return ListView.builder(
-            //         itemCount: snapshot.data?.docs.length,
-            //         itemBuilder: (context, index) {
-            //           return ListTile(
-            //             title: Text(snapshot.data?.docs[index]['name']),
-            //             subtitle: Row(
-            //               children: [
-            //                 Text(snapshot.data!.docs[index]['latitude']
-            //                     .toString()),
-            //                 const SizedBox(
-            //                   width: 10,
-            //                 ),
-            //                 Text(snapshot.data!.docs[index]['longitude']
-            //                     .toString())
-            //               ],
-            //             ),
-            //             trailing: IconButton(
-            //                 onPressed: () {
-            //                   Navigator.push(
-            //                       context,
-            //                       MaterialPageRoute(
-            //                           builder: (context) => MapsPage(
-            //                                 userId:
-            //                                     snapshot.data!.docs[index].id,
-            //                               )));
-            //                 },
-            //                 icon: const Icon(Icons.directions)),
-            //           );
-            //         });
-            //   },
-            // ),
-          )
+          // TextButton(
+          //     onPressed: () {
+          //       _getLocation();
+          //     },
+          //     child: Text('Get Location')),
+          // TextButton(
+          //     onPressed: () {
+          //       _listeningLocation();
+          //     },
+          //     child: Text('Listem Location')),
+          // TextButton(
+          //     onPressed: () {
+          //       _stopLocation();
+          //     },
+          //     child: Text('Stop Location')),
+          Expanded(
+              child: MapsPage(
+            userId: 'user 1',
+          ))
         ],
       ),
     ));

@@ -48,10 +48,26 @@ class FirebaseAuthImpl implements IFirebaseAuth {
   }
 
   @override
-  Future<User> signInWithEmailAndPassword(
-      {required String email, required String password}) {
-    // TODO: implement signInWithEmailAndPassword
-    throw UnimplementedError();
+  Future<Either<LoginError, User?>> signInWithEmailAndPassword(
+      {required String email, required String password}) async {
+     try {
+      final credential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return Right(credential.user);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        return Left(LoginError(AppStrings.txtLoginWeakPassword));
+      } else if (e.code == 'email-already-in-use') {
+        return Left(LoginError(AppStrings.txtEmailAreadyExist));
+      }
+    } catch (e) {
+      print(e);
+      return Left(LoginError(e.toString()));
+    }
+    return Left(LoginError('An unknown error occurred.'));
   } 
 
   @override

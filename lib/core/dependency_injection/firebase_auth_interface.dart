@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../error/login_error.dart';
 
 abstract class IFirebaseAuth {
-  Future<User> signInWithEmailAndPassword(
+  Future<Either<LoginError, User?>> signInWithEmailAndPassword(
       {required String email, required String password});
   Future<void> signOut();
   Future<Either<LoginError, User?>> createUserWithEmailAndPassword({
