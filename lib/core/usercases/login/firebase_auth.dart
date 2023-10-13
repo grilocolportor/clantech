@@ -56,6 +56,7 @@ class FirebaseAuthImpl implements IFirebaseAuth {
         email: email,
         password: password,
       );
+      print(credential.user.toString());
       return Right(credential.user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

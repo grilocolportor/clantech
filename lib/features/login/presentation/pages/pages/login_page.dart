@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
 
   // sign user in method
   signUserIn(BuildContext context) {
-    context.read<AuthCubit>().createUserWithEmailAndPassword(
+    context.read<AuthCubit>().signInWithEmailAndPassword(
         email: emailController.text, password: passwordController.text);
   }
 
@@ -86,7 +86,7 @@ class LoginPage extends StatelessWidget {
           // sign in button
           MyButton(
             onTap: () {
-                context.read<AuthCubit>().createUserWithEmailAndPassword(
+                context.read<AuthCubit>().signInWithEmailAndPassword(
         email: emailController.text, password: passwordController.text);;
             },
           ),

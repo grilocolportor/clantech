@@ -1,3 +1,7 @@
+
+
+import 'package:clan_track/core/dependency_injection/local_auth_interface.dart';
+import 'package:clan_track/core/usercases/login/local_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../features/login/injections/setup_login.dart';
@@ -11,4 +15,5 @@ void setupLocator() {
   setupLogin();
 
   locator.registerFactory<IFirebaseAuth>(() => FirebaseAuthImpl());
+   locator.registerFactory<ILocalAuthInterface>(() => LocalAuth());
 }

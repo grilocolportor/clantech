@@ -33,7 +33,6 @@ class AuthCubit extends Cubit<AuthState> {
     await injection.signOut();
     emit(AuthInitial());
   }
-  
 
   Future<void> createUserWithEmailAndPassword(
       {required String email, required String password}) async {
@@ -49,7 +48,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // Sign in with email and password
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
+  Future<void> signInWithEmailAndPassword(
+      {required String email, required String password}) async {
     emit(AuthLoading());
     try {
       var result = await injection.signInWithEmailAndPassword(

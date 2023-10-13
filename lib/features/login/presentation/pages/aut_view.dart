@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../tracker/presentation/pages/TrackPage.dart';
 import '../blocs/signup_bloc.dart';
 import 'pages/login_page.dart';
 
@@ -47,21 +48,6 @@ class AuthView extends StatelessWidget {
   }
 
   Widget buildAuthenticatedUI(BuildContext context, User user) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Authenticated as ${user.email}'),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              // Implement sign out logic
-              context.read<AuthCubit>().signOut();
-            },
-            child: Text('Sign Out'),
-          ),
-        ],
-      ),
-    );
+    return const TrackPage();
   }
 }
