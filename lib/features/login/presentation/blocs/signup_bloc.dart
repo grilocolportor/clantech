@@ -19,6 +19,12 @@ class AuthLoading extends AuthState {}
 
 class AuthAutenticating extends AuthState {}
 
+class AuthIsSighnup extends AuthState {
+  final bool isSignup;
+
+  AuthIsSighnup(this.isSignup);
+}
+
 class AuthError extends AuthState {
   final String error;
 
@@ -36,6 +42,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   final injection = locatorlogin.get<IUserAuthentication>();
   final injectionLocalAuth = locator.get<ILocalAuthInterface>();
+
+  bool isSignup = false;
 
   // Sign out the user
   Future<void> signOut() async {
@@ -71,10 +79,15 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  void setIsSignup() {
+    isSignup = !isSignup;
+    emit(AuthIsSighnup(isSignup));
+  }
+
   Future<void> getLocalUser() async {
     emit(AuthLoading());
     String user = await injectionLocalAuth.getUser() ?? '';
-    
+
     if (user.isEmpty) {
       emit(AuthInitial());
       return;
