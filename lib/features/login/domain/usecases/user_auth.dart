@@ -24,7 +24,7 @@ class UserAuthImpl implements IUserAuthentication {
       if (FormValidator.validateEmail(email).isEmpty) {
         var result = await injection.createUserWithEmailAndPassword(
             email: email, password: password);
-        _saveUser(result.right!);    
+        _saveUser(result.right!);
         return Right(result.right);
       }
 
@@ -61,4 +61,7 @@ class UserAuthImpl implements IUserAuthentication {
     await injectionLocalAuth.saveUser(user: userSerializabled);
   }
 
+  void UpdateUser(User user){
+    
+  }
 }

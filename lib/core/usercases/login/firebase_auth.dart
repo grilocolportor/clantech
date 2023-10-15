@@ -30,7 +30,6 @@ class FirebaseAuthImpl implements IFirebaseAuth {
         return Left(LoginError(AppStrings.txtEmailAreadyExist));
       }
     } catch (e) {
-      print(e);
       return Left(LoginError(e.toString()));
     }
     return Left(LoginError('An unknown error occurred.'));
@@ -56,7 +55,6 @@ class FirebaseAuthImpl implements IFirebaseAuth {
         email: email,
         password: password,
       );
-      print(credential.user.toString());
       return Right(credential.user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -65,7 +63,6 @@ class FirebaseAuthImpl implements IFirebaseAuth {
         return Left(LoginError(AppStrings.txtEmailAreadyExist));
       }
     } catch (e) {
-      print(e);
       return Left(LoginError(e.toString()));
     }
     return Left(LoginError('An unknown error occurred.'));
@@ -84,6 +81,7 @@ class FirebaseAuthImpl implements IFirebaseAuth {
       String? displayName,
       String? email,
       String? password}) async {
+    displayName ?? await user?.updateDisplayName(displayName);
     password ?? await user?.updatePassword(password!);
   }
 }

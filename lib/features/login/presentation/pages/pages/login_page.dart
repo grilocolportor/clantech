@@ -74,38 +74,21 @@ class LoginPage extends StatelessWidget {
                     ? size.height * 0.18
                     : 0,
                 duration: const Duration(milliseconds: 500),
-                child:  Column(
-                      children: [
-                        
-                        Expanded(
-                          child: MyTextField(
-                            controller: emailController,
-                            hintText: 'Email',
-                            obscureText: false,
-                          ),
-                        ),
-                        Expanded(
-                          child: MyTextField(
-                            controller: passwordController,
-                            hintText: 'Password',
-                            obscureText: true,
-                          ),
-                        ),
-                      ],
-                    ),
-              ),
-
-              SizedBox(height: size.height * 0.03),
-
-              // forgot password?
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                child: Column(
                   children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Colors.grey[600]),
+                    Expanded(
+                      child: MyTextField(
+                        controller: emailController,
+                        hintText: 'Email',
+                        obscureText: false,
+                      ),
+                    ),
+                    Expanded(
+                      child: MyTextField(
+                        controller: passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                      ),
                     ),
                   ],
                 ),
@@ -113,12 +96,38 @@ class LoginPage extends StatelessWidget {
 
               SizedBox(height: size.height * 0.03),
 
+              // forgot password?
+              context.watch<AuthCubit>().isSignup
+                  ? const SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Forgot Password?',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    ),
+
+              SizedBox(height: size.height * 0.03),
+
               // sign in button
               MyButton(
+                title:
+                    context.watch<AuthCubit>().isSignup ? 'Sign Up' : 'Sign In',
                 onTap: () {
-                  context.read<AuthCubit>().signInWithEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text);
+                  context.watch<AuthCubit>().isSignup
+                      ? context
+                          .read<AuthCubit>()
+                          .createUserWithEmailAndPassword(
+                              email: emailController.text,
+                              password: passwordController.text)
+                      : context.read<AuthCubit>().signInWithEmailAndPassword(
+                          email: emailController.text,
+                          password: passwordController.text);
                   ;
                 },
               ),
@@ -182,7 +191,9 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Not a member?',
+                    context.watch<AuthCubit>().isSignup
+                        ? 'Aready member?'
+                        : 'Not a member?',
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   const SizedBox(width: 4),
@@ -190,9 +201,11 @@ class LoginPage extends StatelessWidget {
                     onTap: () {
                       context.read<AuthCubit>().setIsSignup();
                     },
-                    child: const Text(
-                      'Register now',
-                      style: TextStyle(
+                    child: Text(
+                      context.watch<AuthCubit>().isSignup
+                          ? 'Sign In'
+                          : 'Register now',
+                      style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
                       ),
