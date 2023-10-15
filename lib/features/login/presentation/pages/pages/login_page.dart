@@ -27,8 +27,7 @@ class LoginPage extends StatelessWidget {
     return Center(
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
-          
-         return  Column(
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: size.height * 0.1),
@@ -68,30 +67,33 @@ class LoginPage extends StatelessWidget {
                 obscureText: true,
               ),
 
-              context.watch<AuthCubit>().isSignup
-                  ? Column(
-                    children: [
-                       SizedBox(height: size.height * 0.01),
-                      MyTextField(
-                          controller: emailController,
-                          hintText: 'Email',
-                          obscureText: false,
+              SizedBox(height: size.height * 0.01),
+
+              AnimatedContainer(
+                height: context.watch<AuthCubit>().isSignup
+                    ? size.height * 0.18
+                    : 0,
+                duration: const Duration(milliseconds: 500),
+                child:  Column(
+                      children: [
+                        
+                        Expanded(
+                          child: MyTextField(
+                            controller: emailController,
+                            hintText: 'Email',
+                            obscureText: false,
+                          ),
                         ),
-                    ],
-                  )
-                  : const SizedBox(),
-              context.read<AuthCubit>().isSignup
-                  ? Column(
-                    children: [
-                       SizedBox(height: size.height * 0.01),
-                      MyTextField(
-                          controller: passwordController,
-                          hintText: 'Password',
-                          obscureText: true,
+                        Expanded(
+                          child: MyTextField(
+                            controller: passwordController,
+                            hintText: 'Password',
+                            obscureText: true,
+                          ),
                         ),
-                    ],
-                  )
-                  : const SizedBox(),
+                      ],
+                    ),
+              ),
 
               SizedBox(height: size.height * 0.03),
 
@@ -188,7 +190,7 @@ class LoginPage extends StatelessWidget {
                     onTap: () {
                       context.read<AuthCubit>().setIsSignup();
                     },
-                    child:  const Text(
+                    child: const Text(
                       'Register now',
                       style: TextStyle(
                         color: Colors.blue,
