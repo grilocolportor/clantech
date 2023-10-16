@@ -1,7 +1,7 @@
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
-class LocationClient {
+class LocationClientBackground {
   final Location _location = Location();
 
   Stream<LatLng> get locationStream =>

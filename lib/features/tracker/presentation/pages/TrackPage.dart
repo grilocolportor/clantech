@@ -27,7 +27,7 @@ class _TrackPageState extends State<TrackPage> {
 
   late LocalUser localUser;
 
-    final _locationClient = LocationClient();
+  final _locationClient = LocationClientBackground();
   final _points = <LatLng>[];
   LatLng? _currPosition;
   bool _isServiceRunning = false;
