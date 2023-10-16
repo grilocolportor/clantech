@@ -5,7 +5,7 @@ import 'package:location/location.dart' as loc;
 
 class MapsPage extends StatefulWidget {
   final String userId;
-  const MapsPage({super.key, required this.userId});
+   const MapsPage({super.key, required this.userId});
 
   @override
   State<MapsPage> createState() => _MapsPageState();

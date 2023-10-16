@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../core/dependency_injection/local_auth_interface.dart';
+import '../../../../core/dependency_injection/setup.dart';
+import '../../../../core/entities/login/local_user.dart';
+
 class TrackPage extends StatefulWidget {
   const TrackPage({super.key});
 
@@ -17,18 +21,32 @@ class _TrackPageState extends State<TrackPage> {
   final location = loc.Location();
   StreamSubscription<loc.LocationData>? _locationSubscription;
 
+  final injectionLocalAuth = locator.get<ILocalAuthInterface>();
+
+  late LocalUser localUser;
+
   @override
-  initState() {
+  initState()  {
     super.initState();
-    _requestPermission();
+    _init();
+    
+  }
+
+  Future<bool> _init() async {
+    await _requestPermission();
+    var u = (await injectionLocalAuth.getUser())!;
+    localUser = injectionLocalAuth.deserializableduser(u);
+    await _getLocation();
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     _listeningLocation();
-    return const Scaffold(
+    return Scaffold(
         body: SafeArea(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // TextButton(
           //     onPressed: () {
@@ -45,10 +63,21 @@ class _TrackPageState extends State<TrackPage> {
           //       _stopLocation();
           //     },
           //     child: Text('Stop Location')),
-          Expanded(
-              child: MapsPage(
-            userId: 'user 1',
-          ))
+          FutureBuilder(
+            future: _init(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Expanded(
+                    child: MapsPage(
+                  userId: localUser.token,
+                ));
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          )
         ],
       ),
     ));
@@ -59,7 +88,7 @@ class _TrackPageState extends State<TrackPage> {
       final loc.LocationData _locationResult = await location.getLocation();
       await FirebaseFirestore.instance
           .collection('locations')
-          .doc('user 1')
+          .doc(localUser.token)
           .set({
         'name': 'Location 1',
         'latitude': _locationResult.latitude,
@@ -72,12 +101,11 @@ class _TrackPageState extends State<TrackPage> {
 
   Future<void> _listeningLocation() async {
     _locationSubscription = location.onLocationChanged.handleError((onError) {
-      print(onError);
       _locationSubscription?.cancel();
     }).listen((loc.LocationData currentLocation) async {
       await FirebaseFirestore.instance
           .collection('locations')
-          .doc('user 1')
+          .doc(localUser.token)
           .set({
         'name': 'Location 1',
         'latitude': currentLocation.latitude,
@@ -93,7 +121,7 @@ class _TrackPageState extends State<TrackPage> {
     });
   }
 
-  _requestPermission() async {
+  Future<void> _requestPermission() async {
     var status = await Permission.location.request();
     if (status.isGranted) {
       print('denied');

@@ -13,6 +13,8 @@ class LoginPage extends StatelessWidget {
   // text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final nameController = TextEditingController();
 
   // sign user in method
   signUserIn(BuildContext context) {
@@ -27,6 +29,7 @@ class LoginPage extends StatelessWidget {
     return Center(
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
+          bool isSignup = context.watch<AuthCubit>().isSignup ;
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -78,7 +81,7 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: MyTextField(
-                        controller: emailController,
+                        controller: confirmPasswordController,
                         hintText: 'Email',
                         obscureText: false,
                       ),
@@ -118,17 +121,19 @@ class LoginPage extends StatelessWidget {
               MyButton(
                 title:
                     context.watch<AuthCubit>().isSignup ? 'Sign Up' : 'Sign In',
-                onTap: () {
-                  context.watch<AuthCubit>().isSignup
-                      ? context
-                          .read<AuthCubit>()
-                          .createUserWithEmailAndPassword(
-                              email: emailController.text,
-                              password: passwordController.text)
-                      : context.read<AuthCubit>().signInWithEmailAndPassword(
+                onTap: () async {
+                  isSignup
+                      ? 
+                          await context
+                              .read<AuthCubit>()
+                              .createUserWithEmailAndPassword(
+                                  email: emailController.text,
+                                  password: passwordController.text)
+                        
+                      : await  context.read<AuthCubit>().signInWithEmailAndPassword(
                           email: emailController.text,
                           password: passwordController.text);
-                  ;
+                  
                 },
               ),
 
