@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:clan_track/features/tracker/presentation/pages/maps.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/dependency_injection/local_auth_interface.dart';
 import '../../../../core/dependency_injection/setup.dart';
 import '../../../../core/entities/login/local_user.dart';
+import '../../data/datasources/location_cliente_background.dart';
 
 class TrackPage extends StatefulWidget {
   const TrackPage({super.key});
@@ -25,6 +27,11 @@ class _TrackPageState extends State<TrackPage> {
 
   late LocalUser localUser;
 
+    final _locationClient = LocationClient();
+  final _points = <LatLng>[];
+  LatLng? _currPosition;
+  bool _isServiceRunning = false;
+
   @override
   initState()  {
     super.initState();
@@ -37,7 +44,24 @@ class _TrackPageState extends State<TrackPage> {
     var u = (await injectionLocalAuth.getUser())!;
     localUser = injectionLocalAuth.deserializableduser(u);
     await _getLocation();
+    _locationClient.init();
+    _listenLocation();
+    Timer.periodic(const Duration(seconds: 3), (_) => _listenLocation());
     return true;
+  }
+
+  void _listenLocation() async {
+    if (!_isServiceRunning && await _locationClient.isServiceEnabled()) {
+      _isServiceRunning = true;
+      _locationClient.locationStream.listen((event) {
+        setState(() {
+          _currPosition = event;
+        });
+        _points.add(_currPosition!);
+      });
+    } else {
+      _isServiceRunning = false;
+    }
   }
 
   @override
