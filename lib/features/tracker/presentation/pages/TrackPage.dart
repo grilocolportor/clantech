@@ -5,12 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart' as loc;
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/dependency_injection/local_auth_interface.dart';
 import '../../../../core/dependency_injection/setup.dart';
 import '../../../../core/entities/login/local_user.dart';
 import '../../data/datasources/location_cliente_background.dart';
+import '../background_service/background_service.dart';
 
 class TrackPage extends StatefulWidget {
   const TrackPage({super.key});
@@ -32,15 +32,19 @@ class _TrackPageState extends State<TrackPage> {
   LatLng? _currPosition;
   bool _isServiceRunning = false;
 
+  BackgroundService backgroundService = BackgroundService();
+
   @override
-  initState()  {
+  initState() {
     super.initState();
     _init();
-    
+
   }
 
+
+
   Future<bool> _init() async {
-    await _requestPermission();
+    await backgroundService.checkLocationPermission();
     var u = (await injectionLocalAuth.getUser())!;
     localUser = injectionLocalAuth.deserializableduser(u);
     await _getLocation();
@@ -114,7 +118,7 @@ class _TrackPageState extends State<TrackPage> {
           .collection('locations')
           .doc(localUser.token)
           .set({
-        'name': 'Location 1',
+        'name': localUser.displayName,
         'latitude': _locationResult.latitude,
         'longitude': _locationResult.longitude
       }, SetOptions(merge: true));
@@ -131,7 +135,7 @@ class _TrackPageState extends State<TrackPage> {
           .collection('locations')
           .doc(localUser.token)
           .set({
-        'name': 'Location 1',
+        'name': localUser.displayName,
         'latitude': currentLocation.latitude,
         'longitude': currentLocation.longitude
       }, SetOptions(merge: true));
@@ -145,15 +149,18 @@ class _TrackPageState extends State<TrackPage> {
     });
   }
 
-  Future<void> _requestPermission() async {
-    var status = await Permission.location.request();
-    if (status.isGranted) {
-      print('denied');
-    } else if (status.isDenied) {
-      print('denied');
-    } else if (status.isPermanentlyDenied) {
-      print('permanently denied');
-      openAppSettings();
-    }
-  }
+  // Future<void> _requestPermission() async {
+  //   var status = await Permission.location.request();
+  //   if (status.isGranted) {
+  //     print('denied');
+  //   } else if (status.isDenied) {
+  //     print('denied');
+  //   } else if (status.isPermanentlyDenied) {
+  //     print('permanently denied');
+  //     openAppSettings();
+  //   }
+  // }
+
+  
+
 }
