@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:background_locator_2/location_dto.dart';
 import 'package:clan_track/features/tracker/presentation/background_service/firebase_repository.dart';
+import 'package:logger/logger.dart';
 
 import 'file_manager.dart';
 
@@ -20,6 +21,11 @@ class LocationServiceRepository {
   static const String isolateName = 'LocatorIsolate';
 
   int _count = -1;
+
+  double latBefore = 0.0;
+  double longBefore = 0.0;
+
+  var logger = Logger();
 
   FirebaseRepository firebaseRepository = FirebaseRepository();
 
@@ -57,7 +63,7 @@ class LocationServiceRepository {
   Future<void> callback(LocationDto locationDto) async {
     print('$_count location in dart: ${locationDto.toString()}');
     await setLogPosition(_count, locationDto);
-    await sendDatatoFirestore(locationDto);
+    await _isMoved(locationDto);
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(locationDto.toJson());
     _count++;
@@ -85,16 +91,20 @@ class LocationServiceRepository {
   }
 
   static String formatDateLog(DateTime date) {
-    return date.hour.toString() +
-        ":" +
-        date.minute.toString() +
-        ":" +
-        date.second.toString();
+    return "${date.hour}:${date.minute}:${date.second}";
   }
 
   static String formatLog(LocationDto locationDto) {
-    return dp(locationDto.latitude, 4).toString() +
-        " " +
-        dp(locationDto.longitude, 4).toString();
+    return "${dp(locationDto.latitude, 4)} ${dp(locationDto.longitude, 4)}";
+  }
+
+  Future<void> _isMoved(LocationDto locationDto) async {
+    if (latBefore != locationDto.latitude ||
+        longBefore != locationDto.longitude) {
+      longBefore = locationDto.longitude;
+      latBefore = locationDto.latitude;
+      Future.delayed(const Duration(seconds: 5));
+      await sendDatatoFirestore(locationDto);
+    }
   }
 }

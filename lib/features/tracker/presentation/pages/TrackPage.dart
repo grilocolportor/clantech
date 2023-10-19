@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart' as loc;
+import 'package:logger/logger.dart';
 
 import '../../../../core/dependency_injection/local_auth_interface.dart';
 import '../../../../core/dependency_injection/setup.dart';
@@ -34,14 +35,15 @@ class _TrackPageState extends State<TrackPage> {
 
   BackgroundService backgroundService = BackgroundService();
 
+  double latBefore = 0.0;
+  double longBefore = 0.0;
+
+  var logger = Logger();
   @override
   initState() {
     super.initState();
     _init();
-
   }
-
-
 
   Future<bool> _init() async {
     await backgroundService.checkLocationPermission();
@@ -123,23 +125,45 @@ class _TrackPageState extends State<TrackPage> {
         'longitude': _locationResult.longitude
       }, SetOptions(merge: true));
     } catch (e) {
-      print(e);
+      logger.e(e);
     }
   }
 
   Future<void> _listeningLocation() async {
     _locationSubscription = location.onLocationChanged.handleError((onError) {
       _locationSubscription?.cancel();
+       logger.e(onError);
     }).listen((loc.LocationData currentLocation) async {
-      await FirebaseFirestore.instance
-          .collection('locations')
-          .doc(localUser.token)
-          .set({
-        'name': localUser.displayName,
-        'latitude': currentLocation.latitude,
-        'longitude': currentLocation.longitude
-      }, SetOptions(merge: true));
+      await _isMoved(currentLocation);
+      // await FirebaseFirestore.instance
+      //     .collection('locations')
+      //     .doc(localUser.token)
+      //     .set({
+      //   'name': localUser.displayName,
+      //   'latitude': currentLocation.latitude,
+      //   'longitude': currentLocation.longitude
+      // }, SetOptions(merge: true));
     });
+  }
+
+  Future<void> _isMoved(loc.LocationData location) async {
+    if (latBefore != location.latitude || longBefore != location.longitude) {
+      longBefore = location.longitude!;
+      latBefore = location.latitude!;
+      Future.delayed(const Duration(seconds: 5));
+      await sendDatatoFirestore(location);
+    }
+  }
+
+  Future<void> sendDatatoFirestore(loc.LocationData location) async {
+    await FirebaseFirestore.instance
+        .collection('locations')
+        .doc(localUser.token)
+        .set({
+      'name': localUser.displayName,
+      'latitude': location.latitude,
+      'longitude': location.longitude
+    }, SetOptions(merge: true));
   }
 
   _stopLocation() {
@@ -160,7 +184,4 @@ class _TrackPageState extends State<TrackPage> {
   //     openAppSettings();
   //   }
   // }
-
-  
-
 }

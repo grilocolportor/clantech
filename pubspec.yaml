@@ -50,6 +50,7 @@ dependencies:
   background_locator_2: ^2.0.6
   path_provider: ^2.1.1
   location_permissions: ^4.0.1
+  logger: ^2.0.2+1
  
 
 dev_dependencies:
